@@ -64,7 +64,12 @@ color: #FFF;
  color: #f91257;  
  font-weight: bold;
 }
-
+.buttonMore{
+    background-color:  #30beff;
+    padding: 8px 24px;
+    color: #FFF;
+    border-radius: 8px;
+}
 /* RESPONSIVE TABLE*/
 
 @media screen and (max-width:600px){
@@ -91,14 +96,14 @@ color: #FFF;
         display: block;
         text-align: right;/* lado direito resultado das descicoes*/
     }
-    table td:before{/* lado esquerdo nome valor essas descricoes*/
+    table td::before{/* lado esquerdo nome valor essas descricoes*/
         content: attr(data-label);
         float: left;
         font-weight: bold;
        text-transform: uppercase;
     }
     table td:last-child{
-border-bottom: 0;
+    border-bottom: 0;   
     }
     td:first-child,
     th:first-child{
