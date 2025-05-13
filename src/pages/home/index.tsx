@@ -3,7 +3,7 @@ import styles from './home.module.css'
 import { BsSearch } from 'react-icons/bs' //icones
 import { Link,useNavigate } from 'react-router-dom'//moedas
 
-interface CoinProps{
+export interface CoinProps{
     id:string;
     name:string;
     symbol:string;
@@ -30,6 +30,7 @@ export function Home(){
 const [input,setInput] = useState("");
 const [coins,setCoins] = useState<CoinProps[]>([]);
 const [morecoins,setMorecoins] = useState(0)
+const [loading,setloading] =useState(false)
 
 const navigate = useNavigate()
 
@@ -38,6 +39,7 @@ getData()
  },[morecoins])
 
  async function getData(){
+    setloading(true);
  /*const await response =*/  fetch(`https://rest.coincap.io/v3/assets?limit=10&offset=0${morecoins}`, {
     headers: {
         // Substitua pela chave, se for o caso
@@ -76,6 +78,7 @@ const formatedResult = coinsData.map((item)=>{
 console.log(formatedResult)
 const listcoinsmais = [...coins, ...formatedResult]
 setCoins(listcoinsmais);
+setloading(false)
 
 })
 
@@ -128,7 +131,7 @@ placeholder='Digite sua moeda'
     <td className={styles.tdLabel} data-label="Moeda">
       <div className={styles.name}>
         <img className={styles.logo} src={`https://assets.coincap.io/assets/icons/${item.symbol.toLowerCase()}@2x.png`} alt="Logo Cripto" />
-          <Link target="_blank" to={`/detail/${item.id}`}>
+          <Link  to={`/detail/${item.id}`}>
         <span>{item.name}</span> | {item.symbol}
         </Link>
       </div>
@@ -158,7 +161,9 @@ placeholder='Digite sua moeda'
 <button className={styles.buttonMore}
 onClick={handleGetMore}
 >Carregar mais</button>
+{loading && <p className={styles.load}>Carregando moedas..</p>}
 </main>
+
 
     )
 }

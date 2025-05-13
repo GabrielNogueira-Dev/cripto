@@ -84,6 +84,15 @@ color: #FFF;
     gap: 8px;
     align-items: center;
 }
+.load{
+    font-family: sans-serif;
+  margin-top: 180px;
+    place-items: center;
+    text-align: center;
+    font-size: 35px;
+    color: #FFF;
+  text-transform: uppercase;
+}
 /* RESPONSIVE TABLE*/
 
 @media screen and (max-width:600px){
@@ -129,5 +138,14 @@ margin-left: 14px;
     td:last-child,
     th:last-child{
     border-radius: 0 8px 8px 0; 
+}
+.load{
+  margin-top: 160px;
+    place-items: center;
+    text-align: center;
+    font-size: 20px;
+    color: #FFF;
+  text-transform: uppercase;
+  font-family: sans-serif;
 }
 }
