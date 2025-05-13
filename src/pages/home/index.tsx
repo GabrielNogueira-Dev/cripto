@@ -16,6 +16,10 @@ interface CoinProps{
     marketCapUsd:string;
     volumeUsd24Hr:string;
     explorer:string;
+    formatedPrice?:string;
+    formatedMarket?:string;
+    formatedVolume?:string;
+    formatedChange?:string;
 }
 
 interface DataProp{
@@ -25,14 +29,16 @@ data:CoinProps[]
 export function Home(){
 const [input,setInput] = useState("");
 const [coins,setCoins] = useState<CoinProps[]>([]);
+const [morecoins,setMorecoins] = useState(0)
+
 const navigate = useNavigate()
 
  useEffect(()=>{
 getData()
- },[])
+ },[morecoins])
 
  async function getData(){
- /*const await response =*/  fetch("https://rest.coincap.io/v3/assets?limit=10&offset=0", {
+ /*const await response =*/  fetch(`https://rest.coincap.io/v3/assets?limit=10&offset=0${morecoins}`, {
     headers: {
         // Substitua pela chave, se for o caso
         'Authorization': 'Bearer da0d8e35d578ad3d2a6b9a5dfe57c4b01e06d7aafb0980a66ce1a176d158a688'
@@ -42,24 +48,35 @@ console.log(data.data)
 */
 .then(response => response.json())
 .then((data:DataProp) => {
-   // console.log(data.data);para n ficar usando data.data cria const
+   // console.log(data.data);para n ficar repetitivo usando data.data cria const
    const coinsData = data.data;
    console.log(coinsData)
 
-   //FORMATAR VARIOS NUMEROS PARA P DOLAR "$104,482.90" EXEMPLO
+   //FORMATAR e simplificar qualquer NUMERO PARA P DOLAR "$104,482.90" EXEMPLO
    const price = Intl.NumberFormat("en-US",{
     style:"currency",
     currency:"USD"
+   })//COMPACTAR O DADO DO CLIENTE
+     const priceCompact = Intl.NumberFormat("en-US",{
+    style:"currency",
+    currency:"USD",
+    notation:"compact"
    })
-
+                //CRIAR NOVO ITEM DENTRO DE DATA QUE SEJA SIMPLIFICADO
 const formatedResult = coinsData.map((item)=>{
     const formated = {
         ...item,
-        formatedPrice: price.format(Number(item.priceUsd))
+        formatedPrice: price.format(Number(item.priceUsd)),
+        formatedMarket: priceCompact.format(Number(item.marketCapUsd)),
+        formatedVolume: priceCompact.format(Number(item.volumeUsd24Hr)),
+        formatedChange: price.format(Number(item.changePercent24Hr))
     }
-    return formated
+    return formated;
 })
 console.log(formatedResult)
+const listcoinsmais = [...coins, ...formatedResult]
+setCoins(listcoinsmais);
+
 })
 
  }
@@ -72,7 +89,11 @@ function handleSubmit(e: FormEvent){
 }
 
 function handleGetMore(){
-    alert("h")
+    if(morecoins ===0){
+     setMorecoins(10)  
+      return
+    }
+setMorecoins(morecoins + 10)
 }
 
     return(
@@ -102,32 +123,35 @@ placeholder='Digite sua moeda'
 </thead>
 
 <tbody id='tbody'>
-<tr className={styles.tr}> 
+{coins.length >0 && coins.map((item) => (
+<tr className={styles.tr}  key={item.id}> 
     <td className={styles.tdLabel} data-label="Moeda">
       <div className={styles.name}>
-          <Link to="/detail/bitcoin">
-        <span>Bitcoin</span> | BTC
+        <img className={styles.logo} src={`https://assets.coincap.io/assets/icons/${item.symbol.toLowerCase()}@2x.png`} alt="Logo Cripto" />
+          <Link target="_blank" to={`/detail/${item.id}`}>
+        <span>{item.name}</span> | {item.symbol}
         </Link>
       </div>
     </td>
 
     <td className={styles.tdLabel} data-label="Valor mercado">
-    1T
+    {item.formatedMarket}
     </td>
 
     <td className={styles.tdLabel} data-label="Preço">
-    8.00
+    {item.formatedPrice}
     </td>
 
      <td className={styles.tdLabel} data-label="Volume">
-   2B
+   {item.formatedVolume}
     </td>
 
-     <td className={styles.tdpositive} data-label="Mudança 24h">
-    <span>1.20</span>
+     <td className={Number(item.changePercent24Hr) > 0 ? styles.tdpositive : styles.tdnegative} data-label="Mudança 24h">
+    <span>{item.formatedChange}</span> 
     </td>
 
 </tr>
+))}
 </tbody>
 </table>
 
